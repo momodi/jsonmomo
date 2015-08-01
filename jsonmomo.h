@@ -36,7 +36,7 @@ namespace jsonmomo {
 
             int asInt() const; // throw an exception when the value is not integer, or bigger than 32 bit integer.
             int64_t asInt64() const; // throw an exception when the value is not integer.
-            double asDouble() const;
+            double asDouble() const; // integer and double are both ok.
             bool asBool() const;
             const string& asString() const;
             vector<Value>& asVector(); // return C++STL vector as an array, so you can use foo.asVector().push_back(123) to append a value, or any other function with vector
@@ -107,6 +107,9 @@ namespace jsonmomo {
         return this->v_int64;
     }
     double Value::asDouble() const {
+        if (_type == INT) {
+            return this->v_int64;
+        }
         check_type(DOUBLE);
         return this->v_double;
     }
