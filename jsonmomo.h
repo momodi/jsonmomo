@@ -43,7 +43,7 @@ namespace jsonmomo {
             const vector<Value>& asVector() const;
             map<string, Value>& asMap(); // return C++Map as an Object.
             const map<string, Value>& asMap() const;
-            Type type() const; // return the type of the value which is the set(NUL, INT, DOUBLE, BOOL, STRING, ARRAY, OBJECT)
+            Type type() const; // return the type of the value, which is one of the set(NUL, INT, DOUBLE, BOOL, STRING, ARRAY, OBJECT)
 
             Value & operator[](size_t i);// no boundary check
             const Value & operator[](size_t i) const;
