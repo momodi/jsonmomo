@@ -33,24 +33,28 @@ namespace jsonmomo {
             Value(vector<Value> &&v);
             Value(const map<string, Value> &v);
             Value(map<string, Value> &&v);
-            int asInt() const;
-            int64_t asInt64() const;
+
+            int asInt() const; // throw an exception when the value is not integer, or bigger than 32 bit integer.
+            int64_t asInt64() const; // throw an exception when the value is not integer.
             double asDouble() const;
             bool asBool() const;
             const string& asString() const;
-            vector<Value>& asVector();
+            vector<Value>& asVector(); // return C++STL vector as an array, so you can use foo.asVector().push_back(123) to append a value, or any other function with vector
             const vector<Value>& asVector() const;
-            map<string, Value>& asMap();
+            map<string, Value>& asMap(); // return C++Map as an Object.
             const map<string, Value>& asMap() const;
-            Type type() const;
+            Type type() const; // return the type of the value which is the set(NUL, INT, DOUBLE, BOOL, STRING, ARRAY, OBJECT)
 
-            Value & operator[](size_t i);
+            Value & operator[](size_t i);// no boundary check
             const Value & operator[](size_t i) const;
-            Value & operator[](const string &key);
-            const Value & operator[](const string &key) const;
+            Value & operator[](const string &key); //insert a null value when the key is not in the map
+            const Value & operator[](const string &key) const; // throw exception when key is not in the map
 
             Value& parse(const string &in);
             string write() const;
+            /**
+             * rewrite operator <<, so you can do this: cout << foo << endl;
+             */
             friend ostream & operator << (ostream & os, const Value &v) {
                 os << v.write();
                 return os;
@@ -105,6 +109,10 @@ namespace jsonmomo {
     double Value::asDouble() const {
         check_type(DOUBLE);
         return this->v_double;
+    }
+    bool Value::asBool() const {
+        check_type(BOOL);
+        return this->v_bool;
     }
     const string& Value::asString() const {
         check_type(STRING);
@@ -209,9 +217,11 @@ namespace jsonmomo {
                 i = j;
             } else if (isdigit(p[i])) {
                 bool isdouble = false;
-                for (auto j = i; j < in.size() && isdigit(p[j]) && p[j + 1] == '.'; j += 1) {
-                    isdouble = true;
-                    break;
+                for (auto j = i; j < in.size() && isdigit(p[j]); j += 1) {
+                    if (p[j + 1] == '.' || p[j + 1] == 'e' || p[j + 1] == 'E') {
+                        isdouble = true;
+                        break;
+                    }
                 }
                 int minus_flag = 1;
                 if (i > 0 && p[i - 1] == '-') {
@@ -224,7 +234,7 @@ namespace jsonmomo {
                     sta.emplace_back('d', Value(v));
                 } else {
                     int64_t v = 0;
-                    sscanf(p + i, "%lld", &v);
+                    sscanf(p + i, "%ld", &v);
                     v *= minus_flag;
                     sta.emplace_back('i', Value(v));
                 }
