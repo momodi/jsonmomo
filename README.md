@@ -21,9 +21,11 @@ For more detail, see jsonmomo.h.
     cout << b_json["arr"] << endl;
 
 ### Benchmark
-I parsed a text file which has 300000 lines to Json Values, and then serialized them to strings and restored to another text file.
+I parsed 300000 lines to Json Values, and then I serialized them to restore to a text file.
 With jsonmomo, the cost time:
+
     **4.51s user 0.47s system 99% cpu 4.975 total**
 With jsoncpp, the cost time:
+
     **4.51s user 0.47s system 99% cpu 4.975 total**
     
