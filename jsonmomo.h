@@ -68,7 +68,7 @@ namespace jsonmomo {
             shared_ptr<vector<Value>> v_arr;
             shared_ptr<map<string, Value>> v_obj;
             void check_type(const Type &t) const;
-            void rec_write(stringstream &O) const;
+            void rec_write(ostringstream &O) const;
     };
     Value::Value(const vector<Value> &v) {
         this->_type = ARRAY;
@@ -266,7 +266,7 @@ namespace jsonmomo {
         }
         return *this;
     }
-    void Value::rec_write(stringstream &O) const {
+    void Value::rec_write(ostringstream &O) const {
         if (this->_type == NUL) {
             O << "null";
         } else if (this->_type == INT) {
@@ -310,7 +310,7 @@ namespace jsonmomo {
         }
     }
     string Value::write() const {
-        stringstream O;
+        ostringstream O;
         rec_write(O);
         return O.str();
     }
