@@ -209,7 +209,19 @@ namespace jsonmomo {
                 S.reserve(100);
                 while (j < in.size() && p[j] != '"') {
                     if (p[j] == '\\') {
-                        S.push_back(p[j + 1]);
+                        if (p[j + 1] == 'b') {
+                            S.push_back('\b');
+                        } else if (p[j + 1] == 'f') {
+                            S.push_back('\f');
+                        } else if (p[j + 1] == 'n') {
+                            S.push_back('\n');
+                        } else if (p[j + 1] == 'r') {
+                            S.push_back('\r');
+                        } else if (p[j + 1] == 't') {
+                            S.push_back('\t');
+                        } else {
+                            S.push_back(p[j + 1]);
+                        }
                         j += 2;
                     } else {
                         S.push_back(p[j]);
@@ -283,9 +295,20 @@ namespace jsonmomo {
             O << '"';
             for (const auto &each: this->v_string) {
                 if (each == '\\' || each == '"') {
-                    O << '\\';
+                    O << '\\' << each;
+                } else if (each == '\b') {
+                    O << '\\' << 'b';
+                } else if (each == '\f') {
+                    O << '\\' << 'f';
+                } else if (each == '\n') {
+                    O << '\\' << 'n';
+                } else if (each == '\r') {
+                    O << '\\' << 'r';
+                } else if (each == '\t') {
+                    O << '\\' << 't';
+                } else {
+                    O << each;
                 }
-                O << each;
             }
             O << '"';
         } else if (_type == ARRAY) {
