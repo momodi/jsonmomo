@@ -24,6 +24,7 @@ namespace jsonmomo {
             Value():_type(NUL) {};
             Value(int v):_type(INT), v_int64(v) {};
             Value(int64_t v):_type(INT), v_int64(v) {};
+            Value(long long v):_type(INT), v_int64(v) {};
             Value(double v):_type(DOUBLE), v_double(v) {};
             Value(bool v):_type(BOOL), v_bool(v) {};
             Value(const string &v):_type(STRING), v_string(v) {};
@@ -61,9 +62,11 @@ namespace jsonmomo {
             }
         private:
             Type _type;
-            int64_t v_int64;
-            double v_double;
-            bool v_bool;
+            union {
+                int64_t v_int64;
+                double v_double;
+                bool v_bool;
+            };
             string v_string;
             shared_ptr<vector<Value>> v_arr;
             shared_ptr<map<string, Value>> v_obj;
@@ -162,7 +165,7 @@ namespace jsonmomo {
     }
     Value& Value::parse(const string &in) {
         vector<pair<char, Value>> sta;
-        sta.reserve(1000);
+        sta.reserve(10000);
         const char *p = in.c_str();
         for (size_t i = 0; i < in.size(); ++i) {
             if (isspace(p[i]) || p[i] == '-' || p[i] == ':' || p[i] == ',') {
@@ -228,7 +231,7 @@ namespace jsonmomo {
                         j += 1;
                     }
                 }
-                sta.emplace_back('v', Value(S));
+                sta.emplace_back('v', Value(move(S)));
                 i = j;
             } else if (isdigit(p[i])) {
                 bool isdouble = false;
